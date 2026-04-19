@@ -67,103 +67,95 @@ This project is my attempt to bridge the gap between **domain expertise** and **
 
 ## Quick Start
 
-### 1. Prerequisites
+### 1. Install ppm CLI
 
-**You only need Python.** Everything else is installed via `pip install -r requirements.txt`.
-
-| Dependency | Required? | What it does |
-|------------|:---------:|--------------|
-| [Python](https://www.python.org/downloads/) 3.10+ | ✅ **Yes** | Core runtime — the only thing you actually need to install |
-
-> **TL;DR** — Install Python, run `pip install -r requirements.txt`, and you're ready to generate presentations.
+**Prerequisites:** [Python](https://www.python.org/downloads/) 3.9+
 
 <details open>
-<summary><strong>Windows</strong> — see the dedicated step-by-step guide ⚠️</summary>
+<summary><strong>Local Development Install</strong> (current)</summary>
 
-Windows requires a few extra steps (PATH setup, execution policy, etc.). We wrote a **step-by-step guide** specifically for Windows users:
+```bash
+# Clone the CLI repo
+git clone https://github.com/wang20110277/ppt-master-cli.git
+cd ppt-master-cli
 
-**📖 [Windows Installation Guide](./docs/windows-installation.md)** — from zero to a working presentation in 10 minutes.
+# Install in editable (dev) mode
+pip install -e .
 
-Quick version: download Python from [python.org](https://www.python.org/downloads/) → **check "Add to PATH"** during install → `pip install -r requirements.txt` → done.
+# Verify installation
+ppm -v
+```
+
 </details>
 
 <details>
-<summary><strong>macOS / Linux</strong> — install and go</summary>
+<summary><strong>Public PyPI Install</strong> (coming soon)</summary>
 
 ```bash
-# macOS
-brew install python
-pip install -r requirements.txt
-
-# Ubuntu / Debian
-sudo apt install python3 python3-pip
-pip install -r requirements.txt
+pip install ppt-master-cli
+ppm -v
 ```
+
 </details>
 
 <details>
 <summary><strong>Edge-case fallbacks</strong> — 99% of users don't need these</summary>
 
-Two external tools exist as fallbacks for edge cases. **Most users will never need them** — install only if you hit one of the specific scenarios below.
-
 | Fallback | Install only if… |
 |----------|-----------------|
-| [Node.js](https://nodejs.org/) 18+ | You need to import WeChat Official Account articles **and** `curl_cffi` (part of `requirements.txt`) has no prebuilt wheel for your Python + OS + CPU combination. In normal setups `web_to_md.py` handles WeChat directly through `curl_cffi`. |
-| [Pandoc](https://pandoc.org/) | You need to convert legacy formats: `.doc`, `.odt`, `.rtf`, `.tex`, `.rst`, `.org`, or `.typ`. `.docx`, `.html`, `.epub`, `.ipynb` are handled natively by Python — no pandoc required. |
+| [Node.js](https://nodejs.org/) 18+ | You need to import WeChat Official Account articles **and** `curl_cffi` has no prebuilt wheel for your Python + OS + CPU combination. |
+| [Pandoc](https://pandoc.org/) | You need to convert legacy formats: `.doc`, `.odt`, `.rtf`, `.tex`, `.rst`, `.org`, or `.typ`. `.docx`, `.html`, `.epub`, `.ipynb` are handled natively. |
 
-```bash
-# macOS (only if the above conditions apply)
-brew install node
-brew install pandoc
-
-# Ubuntu / Debian
-sudo apt install nodejs npm
-sudo apt install pandoc
-```
 </details>
 
-### 2. Pick an AI Editor
+### 2. Install Skill for Claude Code
+
+The skill repo provides AI role definitions, templates, and the SKILL.md workflow that powers Claude Code integration.
+
+```bash
+# Clone the skill repo as a sibling directory
+cd ..
+git clone https://github.com/wang20110277/ppt-master-skill.git
+```
+
+Expected directory layout:
+
+```
+parent-dir/
+├── ppt-master-cli/     ← CLI tool (this repo)
+└── ppt-master-skill/   ← Skill definitions (sibling repo)
+```
+
+The `ppm` CLI reads templates and references from the `../ppt-master-skill/` directory automatically.
+
+### 3. Pick an AI Editor
 
 | Tool | Rating | Notes |
 |------|:------:|-------|
-| **[Claude Code](https://claude.ai/)** | ⭐⭐⭐ | Best results — native Opus, largest context |
+| **[Claude Code](https://claude.ai/)** | ⭐⭐⭐ | Best results — native Opus, largest context. With skill installed, just tell Claude to create a PPT |
 | [Cursor](https://cursor.sh/) / [VS Code + Copilot](https://code.visualstudio.com/) | ⭐⭐ | Good alternatives |
 | Codebuddy IDE | ⭐⭐ | Best for Chinese models (Kimi 2.5, MiniMax 2.7) |
 
-### 3. Set Up
+### 4. Create a Presentation
 
-**Option A — Download ZIP** (no Git required): click **Code → Download ZIP** on the [GitHub page](https://github.com/hugohe3/ppt-master), then unzip.
-
-**Option B — Git clone** (requires [Git](https://git-scm.com/downloads) installed):
+Use the `ppm create` command to generate a PPT from any source document:
 
 ```bash
-git clone https://github.com/hugohe3/ppt-master.git
-cd ppt-master
+# One-step creation from PDF, DOCX, URL, or Markdown
+ppm create <input_file_or_url> --format ppt169 -o ./output
 ```
 
-Then install dependencies:
-
-```bash
-pip install -r requirements.txt
-```
-
-To update later (Option B only): `python3 src/pptmaster/scripts/update_repo.py`
-
-### 4. Create
-
-**Provide source materials (recommended):** Place your PDF, DOCX, images, or other files in the `projects/` directory, then tell the AI chat panel which files to use. The quickest way to get the path: right-click the file in your file manager or IDE sidebar → **Copy Path** (or **Copy Relative Path**) and paste it directly into the chat.
+Or work interactively in your AI editor:
 
 ```
 You: Please create a PPT from projects/q3-report/sources/report.pdf
 ```
 
-**Paste content directly:** You can also paste text content straight into the chat window and the AI will generate a PPT from it.
-
 ```
 You: Please turn the following into a PPT: [paste your content here...]
 ```
 
-Either way, the AI will first confirm the design spec:
+The AI will confirm the design spec first:
 
 ```
 AI:  Sure. Let's confirm the design spec:
@@ -179,7 +171,7 @@ The AI handles everything — content analysis, visual design, SVG generation, a
 
 > **AI lost context?** Ask it to read the SKILL.md in the [ppt-master-skill](../ppt-master-skill) sibling repo.
 
-> **Something went wrong?** Check the **[FAQ](./docs/faq.md)** — it covers model selection, layout issues, export problems, and more. Continuously updated from real user reports.
+> **Something went wrong?** Check the **[FAQ](./docs/faq.md)** — it covers model selection, layout issues, export problems, and more.
 
 ### 5. AI Image Generation (Optional)
 
@@ -195,9 +187,9 @@ GEMINI_MODEL=gemini-3.1-flash-image-preview
 
 Supported backends: `gemini` · `openai` · `qwen` · `zhipu` · `volcengine` · `stability` · `bfl` · `ideogram` · `siliconflow` · `fal` · `replicate`
 
-Run `python3 src/pptmaster/scripts/image_gen.py --list-backends` to see tiers. Environment variables override `.env`. Use provider-specific keys (`GEMINI_API_KEY`, `OPENAI_API_KEY`, etc.) — global `IMAGE_API_KEY` is not supported.
+Run `ppm image-gen --list-backends` or `python3 src/pptmaster/scripts/image_gen.py --list-backends` to see tiers.
 
-> **Tip:** For best quality, generate images in [Gemini](https://gemini.google.com/) and select **Download full size**. Remove the watermark with `scripts/gemini_watermark_remover.py`.
+> **Tip:** For best quality, generate images in [Gemini](https://gemini.google.com/) and select **Download full size**.
 
 ---
 

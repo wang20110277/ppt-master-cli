@@ -3,7 +3,7 @@ requires = ["setuptools>=68.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "pptmaster-cli"
+name = "ppt-master-cli"
 version = "0.1.0"
 description = "AI-driven PPT generation CLI — convert documents to native PPTX via SVG"
 readme = "README.md"

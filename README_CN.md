@@ -67,107 +67,95 @@ PPT Master 源于一个真实的痛点：在投融资和咨询工作中，我每
 
 ## 快速开始
 
-### 1. 前置条件
+### 1. 安装 ppm 命令行工具
 
-**只需装 Python 即可。** 其余依赖通过 `pip install -r requirements.txt` 一次装齐。
-
-| 依赖 | 是否必须 | 用途 |
-|------|:--------:|------|
-| [Python](https://www.python.org/downloads/) 3.10+ | ✅ **必需** | 核心运行时——唯一真正需要安装的东西 |
-
-> **一句话总结** — 装好 Python，跑一行 `pip install -r requirements.txt`，就可以开始生成 PPT 了。
+**前置条件：** [Python](https://www.python.org/downloads/) 3.9+
 
 <details open>
-<summary><strong>Windows</strong> — 请看专门的手把手安装指南 ⚠️</summary>
+<summary><strong>本地开发安装</strong>（当前方式）</summary>
 
-Windows 需要一些额外步骤（PATH 设置、执行策略等）。我们为 Windows 用户写了一份**手把手安装指南**：
+```bash
+# 克隆 CLI 仓库
+git clone https://github.com/wang20110277/ppt-master-cli.git
+cd ppt-master-cli
 
-**📖 [Windows 安装指南](./docs/zh/windows-installation.md)** — 从零到跑通第一份 PPT，10 分钟搞定。
+# 以开发模式安装
+pip install -e .
 
-简要流程：从 [python.org](https://www.python.org/downloads/) 下载 Python → **安装时勾选 "Add to PATH"** → `pip install -r requirements.txt` → 完成。
+# 验证安装
+ppm -v
+```
+
 </details>
 
 <details>
-<summary><strong>macOS / Linux</strong> — 安装即用</summary>
+<summary><strong>PyPI 公共仓库安装</strong>（即将上线）</summary>
 
 ```bash
-# macOS
-brew install python
-pip install -r requirements.txt
-
-# Ubuntu / Debian
-sudo apt install python3 python3-pip
-pip install -r requirements.txt
+pip install ppt-master-cli
+ppm -v
 ```
+
 </details>
 
 <details>
 <summary><strong>边缘场景备用方案</strong> — 99% 的用户用不到</summary>
 
-下面两个外部程序只作为极端场景的兜底。**绝大多数用户根本不需要装**，只有遇到以下具体场景才装：
-
 | 备用方案 | 只在以下情况才装 |
 |---------|-----------------|
-| [Node.js](https://nodejs.org/) 18+ | 你需要抓取微信公众号文章，**且**你的 Python + 系统 + CPU 组合下 `curl_cffi`（`requirements.txt` 里已默认安装）没有预编译 wheel。正常安装下 `web_to_md.py` 已能通过 `curl_cffi` 直接抓微信。 |
-| [Pandoc](https://pandoc.org/) | 你需要转 `.doc`、`.odt`、`.rtf`、`.tex`、`.rst`、`.org`、`.typ` 这些小众格式。`.docx`、`.html`、`.epub`、`.ipynb` 已由 Python 原生处理，不需要 pandoc。 |
+| [Node.js](https://nodejs.org/) 18+ | 你需要抓取微信公众号文章，**且** `curl_cffi` 没有适配你的 Python + 系统 + CPU 组合的预编译 wheel。 |
+| [Pandoc](https://pandoc.org/) | 你需要转 `.doc`、`.odt`、`.rtf`、`.tex`、`.rst`、`.org`、`.typ` 这些小众格式。`.docx`、`.html`、`.epub`、`.ipynb` 已由 Python 原生处理。 |
 
-```bash
-# macOS（仅在上述条件成立时才装）
-brew install node
-brew install pandoc
-
-# Ubuntu / Debian
-sudo apt install nodejs npm
-sudo apt install pandoc
-```
 </details>
 
-### 2. 选择 AI 编辑器
+### 2. 安装 Claude Code Skill
+
+Skill 仓库提供了 AI 角色定义、模板和 SKILL.md 工作流，用于驱动 Claude Code 集成。
+
+```bash
+# 将 skill 仓库克隆为同级目录
+cd ..
+git clone https://github.com/wang20110277/ppt-master-skill.git
+```
+
+预期目录结构：
+
+```
+parent-dir/
+├── ppt-master-cli/     ← CLI 工具（本仓库）
+└── ppt-master-skill/   ← Skill 定义（同级仓库）
+```
+
+`ppm` CLI 会自动从 `../ppt-master-skill/` 目录读取模板和参考资源。
+
+### 3. 选择 AI 编辑器
 
 | 工具 | 推荐度 | 说明 |
 |------|:------:|------|
-| **[Claude Code](https://claude.ai/)** | ⭐⭐⭐ | 效果最佳——原生 Opus，上下文最充裕 |
+| **[Claude Code](https://claude.ai/)** | ⭐⭐⭐ | 效果最佳——原生 Opus，上下文最充裕。安装 skill 后，直接让 Claude 创建 PPT |
 | [Cursor](https://cursor.sh/) / [VS Code + Copilot](https://code.visualstudio.com/) | ⭐⭐ | 不错的替代方案 |
 | Codebuddy IDE | ⭐⭐ | 国产模型最佳选择（Kimi 2.5、MiniMax 2.7） |
 
-### 3. 配置项目
+### 4. 创建演示文稿
 
-**方式 A — 下载 ZIP**（无需安装 Git）：
-[GitHub](https://github.com/hugohe3/ppt-master) → **Code → Download ZIP** · [AtomGit](https://atomgit.com/hugohe3/ppt-master) → **克隆/下载 → 下载ZIP**（国内网速更快）
-
-**方式 B — Git clone**（需先安装 [Git](https://git-scm.com/downloads)）：
+使用 `ppm create` 命令从任意源文档生成 PPT：
 
 ```bash
-# GitHub
-git clone https://github.com/hugohe3/ppt-master.git
-# AtomGit（国内网速更快）
-git clone https://atomgit.com/hugohe3/ppt-master.git
-cd ppt-master
+# 一键创建——支持 PDF、DOCX、URL 或 Markdown
+ppm create <输入文件或网址> --format ppt169 -o ./output
 ```
 
-然后安装依赖：
-
-```bash
-pip install -r requirements.txt
-```
-
-日常更新（仅方式 B）：`python3 src/pptmaster/scripts/update_repo.py`
-
-### 4. 开始创作
-
-**提供原始材料（推荐）：** 将 PDF、DOCX、图片等文件放入 `projects/` 目录下，在 AI 聊天面板中告诉它使用哪些文件。获取路径的最快方式：在文件管理器或 IDE 侧边栏中右键文件 → **复制路径**（Copy Path / Copy Relative Path），直接粘贴进聊天框。
+或在 AI 编辑器中交互式创建：
 
 ```
 你：请用 projects/q3-report/sources/report.pdf 这份文件生成一份 PPT
 ```
 
-**直接输入内容：** 也可以把文字内容直接粘贴进聊天窗口，AI 会根据这些内容生成 PPT。
-
 ```
 你：请根据以下内容制作成 PPT：[粘贴你的文字内容...]
 ```
 
-两种方式下 AI 都会先确认设计规范：
+AI 会先确认设计规范：
 
 ```
 AI：好的，先确认设计规范：
@@ -183,7 +171,7 @@ AI 全程处理——内容分析、视觉设计、SVG 生成、PPTX 导出。
 
 > **AI 迷失上下文？** 让它先读 [ppt-master-skill](../ppt-master-skill) 同级仓库中的 SKILL.md。
 
-> **遇到问题？** 查看 **[常见问题](./docs/zh/faq.md)** — 涵盖模型选择、排版问题、导出异常等，基于真实用户反馈持续更新。
+> **遇到问题？** 查看 **[常见问题](./docs/zh/faq.md)** — 涵盖模型选择、排版问题、导出异常等。
 
 ### 5. AI 生图配置（可选）
 
@@ -199,9 +187,9 @@ GEMINI_MODEL=gemini-3.1-flash-image-preview
 
 支持的后端：`gemini` · `openai` · `qwen` · `zhipu` · `volcengine` · `stability` · `bfl` · `ideogram` · `siliconflow` · `fal` · `replicate`
 
-运行 `python3 src/pptmaster/scripts/image_gen.py --list-backends` 查看分级。环境变量优先于 `.env`。使用各家独立的 Key（`GEMINI_API_KEY`、`OPENAI_API_KEY` 等）——不支持全局 `IMAGE_API_KEY`。
+运行 `ppm image --list-backends` 或 `python3 src/pptmaster/scripts/image_gen.py --list-backends` 查看分级。
 
-> **建议：** 高质量图片推荐在 [Gemini](https://gemini.google.com/) 中生成并选择 **Download full size**。去水印可用 `scripts/gemini_watermark_remover.py`。
+> **建议：** 高质量图片推荐在 [Gemini](https://gemini.google.com/) 中生成并选择 **Download full size**。
 
 ---
 

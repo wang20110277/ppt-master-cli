@@ -351,9 +351,9 @@ def main() -> None:
     if args.version:
         try:
             from pptmaster import __version__
-            print(f"pptmaster-cli {__version__}")
+            print(f"ppt-master-cli {__version__}")
         except ImportError:
-            print("pptmaster-cli (unknown version)")
+            print("ppt-master-cli (unknown version)")
         return
 
     if args.command is None:
