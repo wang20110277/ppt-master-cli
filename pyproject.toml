@@ -1,0 +1,57 @@
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pptmaster-cli"
+version = "0.1.0"
+description = "AI-driven PPT generation CLI — convert documents to native PPTX via SVG"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.9"
+authors = [{name = "PPT Master Contributors"}]
+keywords = ["ppt", "pptx", "svg", "presentation", "ai", "cli"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: End Users/Desktop",
+    "Topic :: Office/Business :: Presentation",
+    "Programming Language :: Python :: 3",
+]
+
+dependencies = [
+    "python-pptx>=0.6.21",
+    "svglib>=1.5.0",
+    "reportlab>=4.0.0",
+    "PyMuPDF>=1.23.0",
+    "Pillow>=9.0.0",
+    "numpy>=1.20.0",
+    "requests>=2.31.0",
+    "beautifulsoup4>=4.12.0",
+    "mammoth>=1.6.0",
+    "markdownify>=0.11.6",
+]
+
+[project.optional-dependencies]
+all = [
+    "ebooklib>=0.18",
+    "nbconvert>=7.0.0",
+    "curl_cffi>=0.7.0",
+    "google-genai>=1.0.0",
+    "openai>=1.0.0",
+    "cairosvg",
+]
+ai = ["google-genai>=1.0.0", "openai>=1.0.0"]
+web = ["curl_cffi>=0.7.0"]
+docs = ["ebooklib>=0.18", "nbconvert>=7.0.0"]
+
+[project.scripts]
+ppm = "pptmaster.cli:main"
+
+[tool.setuptools.package-dir]
+pptmaster = "src/pptmaster"
+
+[tool.setuptools.package-data]
+pptmaster = [
+    "scripts/assets/*",
+]
