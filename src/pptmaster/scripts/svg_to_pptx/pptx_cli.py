@@ -128,10 +128,19 @@ Speaker notes (enabled by default):
         stem = output_base.stem
         legacy_path = output_base.parent / f"{stem}_svg{output_base.suffix}"
     else:
-        exports_dir = project_path / "exports"
-        exports_dir.mkdir(parents=True, exist_ok=True)
-        native_path = exports_dir / f"{project_name}_{timestamp}.pptx"
-        legacy_path = exports_dir / f"{project_name}_{timestamp}_svg.pptx"
+        # Default output: source file directory (from source_ref.json) or cwd
+        output_dir = Path.cwd()
+        ref_file = project_path / "source_ref.json"
+        if ref_file.exists():
+            try:
+                import json
+                ref = json.loads(ref_file.read_text(encoding="utf-8"))
+                if ref.get("output_dir"):
+                    output_dir = Path(ref["output_dir"])
+            except Exception:
+                pass
+        native_path = output_dir / f"{project_name}_{timestamp}.pptx"
+        legacy_path = output_dir / f"{project_name}_{timestamp}_svg.pptx"
 
     native_path.parent.mkdir(parents=True, exist_ok=True)
 
