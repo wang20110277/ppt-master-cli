@@ -114,7 +114,7 @@ Speaker notes (enabled by default):
     # Determine which versions to generate
     only_mode = args.only
     gen_native = only_mode in (None, 'native')
-    gen_legacy = only_mode in (None, 'legacy')
+    gen_legacy = only_mode == 'legacy'
 
     # --native flag (deprecated) maps to --only native
     if args.native and only_mode is None:
