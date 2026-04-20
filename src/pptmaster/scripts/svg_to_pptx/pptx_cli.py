@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import shutil
 import sys
 import argparse
 from datetime import datetime
@@ -203,5 +204,20 @@ Speaker notes (enabled by default):
             **shared_kwargs,
         )
         success = success and ok
+
+    # --- Cleanup: remove create-mode temp project directory ---
+    if success and project_path.name.startswith('.'):
+        ref_file = project_path / "source_ref.json"
+        if ref_file.exists():
+            try:
+                import json
+                ref = json.loads(ref_file.read_text(encoding="utf-8"))
+                if ref.get("type") == "create_mode":
+                    shutil.rmtree(project_path)
+                    if verbose:
+                        print()
+                        print(f"  Temp project cleaned up: {project_path}")
+            except Exception:
+                pass
 
     sys.exit(0 if success else 1)
