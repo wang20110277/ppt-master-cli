@@ -157,6 +157,7 @@ yarn.lock
 
 # Cache and locks
 .cache/
+.omc/
 *.lock
 .lock
 
